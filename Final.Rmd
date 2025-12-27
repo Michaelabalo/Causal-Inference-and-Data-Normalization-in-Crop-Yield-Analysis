@@ -1,0 +1,89 @@
+---
+title: 'Statistical Programming: Final project'
+author: ' Group Members: '
+date: "August 4, 2023"
+output:
+  word_document:
+    toc: no
+---
+\centering
+
+\raggedright
+
+\clearpage
+
+\tableofcontents
+
+\newpage
+
+\listoffigures
+
+\newpage
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo=TRUE, warning=FALSE, message=FALSE)
+knitr::opts_knit$set(eval.after = "fig.cap")
+```
+```{r,include=FALSE}
+library(visdat)
+library(bnlearn)
+library(ggplot2)
+```
+
+```{r}
+A.2017.Soybeans.Harvest <- read.csv("C:/Users/GINIT/Desktop/SUMMER/STAT 600/Final Project/A 2017 Soybeans Harvest.csv")
+head(A.2017.Soybeans.Harvest)
+```
+
+```{r}
+A.2018.Corn.Harvest <- read.csv("C:/Users/GINIT/Desktop/SUMMER/STAT 600/Final Project/A 2018 Corn Harvest.csv")
+head(A.2018.Corn.Harvest)
+```
+
+```{r}
+A.2018.Corn.Seeding <- read.csv("C:/Users/GINIT/Desktop/SUMMER/STAT 600/Final Project/A 2018 Corn Seeding.csv")
+head(A.2018.Corn.Seeding)
+```
+
+```{r}
+A.2019.Soybeans.Harvest <- read.csv("C:/Users/GINIT/Desktop/SUMMER/STAT 600/Final Project/A 2019 Soybeans Harvest.csv")
+head(A.2019.Soybeans.Harvest)
+```
+
+```{r}
+A.2020.Corn.Harvest <- read.csv("C:/Users/GINIT/Desktop/SUMMER/STAT 600/Final Project/A 2020 Corn Harvest.csv")
+head(A.2020.Corn.Harvest)
+```
+
+```{r}
+A.2020.Corn.Seeding <- read.csv("C:/Users/GINIT/Desktop/SUMMER/STAT 600/Final Project/A 2020 Corn Seeding.csv")
+head(A.2020.Corn.Seeding)
+
+```
+
+```{r}
+# Load the required library
+library(dplyr)
+
+# Combine all the datasets into a single data frame
+Combined.dat <- bind_rows(
+  A.2017.Soybeans.Harvest,
+  A.2018.Corn.Harvest,
+  A.2018.Corn.Seeding,
+  A.2019.Soybeans.Harvest,
+  A.2020.Corn.Harvest,
+  A.2020.Corn.Seeding
+)
+
+# Optional: Reset row names if needed
+rownames(Combined.dat) <- NULL
+
+# View the first few rows of the merged data frame
+head(Combined.dat)
+
+
+
+```
+
+
+

@@ -1,0 +1,315 @@
+% Options for packages loaded elsewhere
+\PassOptionsToPackage{unicode}{hyperref}
+\PassOptionsToPackage{hyphens}{url}
+%
+\documentclass[
+]{article}
+\usepackage{amsmath,amssymb}
+\usepackage{iftex}
+\ifPDFTeX
+  \usepackage[T1]{fontenc}
+  \usepackage[utf8]{inputenc}
+  \usepackage{textcomp} % provide euro and other symbols
+\else % if luatex or xetex
+  \usepackage{unicode-math} % this also loads fontspec
+  \defaultfontfeatures{Scale=MatchLowercase}
+  \defaultfontfeatures[\rmfamily]{Ligatures=TeX,Scale=1}
+\fi
+\usepackage{lmodern}
+\ifPDFTeX\else
+  % xetex/luatex font selection
+\fi
+% Use upquote if available, for straight quotes in verbatim environments
+\IfFileExists{upquote.sty}{\usepackage{upquote}}{}
+\IfFileExists{microtype.sty}{% use microtype if available
+  \usepackage[]{microtype}
+  \UseMicrotypeSet[protrusion]{basicmath} % disable protrusion for tt fonts
+}{}
+\makeatletter
+\@ifundefined{KOMAClassName}{% if non-KOMA class
+  \IfFileExists{parskip.sty}{%
+    \usepackage{parskip}
+  }{% else
+    \setlength{\parindent}{0pt}
+    \setlength{\parskip}{6pt plus 2pt minus 1pt}}
+}{% if KOMA class
+  \KOMAoptions{parskip=half}}
+\makeatother
+\usepackage{xcolor}
+\usepackage[margin=1in]{geometry}
+\usepackage{color}
+\usepackage{fancyvrb}
+\newcommand{\VerbBar}{|}
+\newcommand{\VERB}{\Verb[commandchars=\\\{\}]}
+\DefineVerbatimEnvironment{Highlighting}{Verbatim}{commandchars=\\\{\}}
+% Add ',fontsize=\small' for more characters per line
+\newenvironment{Shaded}{}{}
+\newcommand{\AlertTok}[1]{\textcolor[rgb]{1.00,0.00,0.00}{\textbf{#1}}}
+\newcommand{\AnnotationTok}[1]{\textcolor[rgb]{0.38,0.63,0.69}{\textbf{\textit{#1}}}}
+\newcommand{\AttributeTok}[1]{\textcolor[rgb]{0.49,0.56,0.16}{#1}}
+\newcommand{\BaseNTok}[1]{\textcolor[rgb]{0.25,0.63,0.44}{#1}}
+\newcommand{\BuiltInTok}[1]{\textcolor[rgb]{0.00,0.50,0.00}{#1}}
+\newcommand{\CharTok}[1]{\textcolor[rgb]{0.25,0.44,0.63}{#1}}
+\newcommand{\CommentTok}[1]{\textcolor[rgb]{0.38,0.63,0.69}{\textit{#1}}}
+\newcommand{\CommentVarTok}[1]{\textcolor[rgb]{0.38,0.63,0.69}{\textbf{\textit{#1}}}}
+\newcommand{\ConstantTok}[1]{\textcolor[rgb]{0.53,0.00,0.00}{#1}}
+\newcommand{\ControlFlowTok}[1]{\textcolor[rgb]{0.00,0.44,0.13}{\textbf{#1}}}
+\newcommand{\DataTypeTok}[1]{\textcolor[rgb]{0.56,0.13,0.00}{#1}}
+\newcommand{\DecValTok}[1]{\textcolor[rgb]{0.25,0.63,0.44}{#1}}
+\newcommand{\DocumentationTok}[1]{\textcolor[rgb]{0.73,0.13,0.13}{\textit{#1}}}
+\newcommand{\ErrorTok}[1]{\textcolor[rgb]{1.00,0.00,0.00}{\textbf{#1}}}
+\newcommand{\ExtensionTok}[1]{#1}
+\newcommand{\FloatTok}[1]{\textcolor[rgb]{0.25,0.63,0.44}{#1}}
+\newcommand{\FunctionTok}[1]{\textcolor[rgb]{0.02,0.16,0.49}{#1}}
+\newcommand{\ImportTok}[1]{\textcolor[rgb]{0.00,0.50,0.00}{\textbf{#1}}}
+\newcommand{\InformationTok}[1]{\textcolor[rgb]{0.38,0.63,0.69}{\textbf{\textit{#1}}}}
+\newcommand{\KeywordTok}[1]{\textcolor[rgb]{0.00,0.44,0.13}{\textbf{#1}}}
+\newcommand{\NormalTok}[1]{#1}
+\newcommand{\OperatorTok}[1]{\textcolor[rgb]{0.40,0.40,0.40}{#1}}
+\newcommand{\OtherTok}[1]{\textcolor[rgb]{0.00,0.44,0.13}{#1}}
+\newcommand{\PreprocessorTok}[1]{\textcolor[rgb]{0.74,0.48,0.00}{#1}}
+\newcommand{\RegionMarkerTok}[1]{#1}
+\newcommand{\SpecialCharTok}[1]{\textcolor[rgb]{0.25,0.44,0.63}{#1}}
+\newcommand{\SpecialStringTok}[1]{\textcolor[rgb]{0.73,0.40,0.53}{#1}}
+\newcommand{\StringTok}[1]{\textcolor[rgb]{0.25,0.44,0.63}{#1}}
+\newcommand{\VariableTok}[1]{\textcolor[rgb]{0.10,0.09,0.49}{#1}}
+\newcommand{\VerbatimStringTok}[1]{\textcolor[rgb]{0.25,0.44,0.63}{#1}}
+\newcommand{\WarningTok}[1]{\textcolor[rgb]{0.38,0.63,0.69}{\textbf{\textit{#1}}}}
+\usepackage{graphicx}
+\makeatletter
+\def\maxwidth{\ifdim\Gin@nat@width>\linewidth\linewidth\else\Gin@nat@width\fi}
+\def\maxheight{\ifdim\Gin@nat@height>\textheight\textheight\else\Gin@nat@height\fi}
+\makeatother
+% Scale images if necessary, so that they will not overflow the page
+% margins by default, and it is still possible to overwrite the defaults
+% using explicit options in \includegraphics[width, height, ...]{}
+\setkeys{Gin}{width=\maxwidth,height=\maxheight,keepaspectratio}
+% Set default figure placement to htbp
+\makeatletter
+\def\fps@figure{htbp}
+\makeatother
+\setlength{\emergencystretch}{3em} % prevent overfull lines
+\providecommand{\tightlist}{%
+  \setlength{\itemsep}{0pt}\setlength{\parskip}{0pt}}
+\setcounter{secnumdepth}{-\maxdimen} % remove section numbering
+\usepackage{float}
+\usepackage{longtable}
+\usepackage{titling} \pretitle{\begin{center} \includegraphics[width=2in,height=3in]{PIC_SDSU.png}\LARGE\\} \posttitle{\end{center}}
+\ifLuaTeX
+  \usepackage{selnolig}  % disable illegal ligatures
+\fi
+\IfFileExists{bookmark.sty}{\usepackage{bookmark}}{\usepackage{hyperref}}
+\IfFileExists{xurl.sty}{\usepackage{xurl}}{} % add URL line breaks if available
+\urlstyle{same}
+\hypersetup{
+  pdftitle={Statistical Programming: Final project},
+  pdfauthor={Group Members:},
+  hidelinks,
+  pdfcreator={LaTeX via pandoc}}
+
+\title{Statistical Programming: Final project}
+\author{Group Members:}
+\date{August 4, 2023}
+
+\begin{document}
+\maketitle
+
+\centering
+
+\raggedright
+
+\clearpage
+
+\tableofcontents
+
+\newpage
+
+\listoffigures
+
+\newpage
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{A.}\FloatTok{2017.}\NormalTok{Soybeans.Harvest }\OtherTok{\textless{}{-}} \FunctionTok{read.csv}\NormalTok{(}\StringTok{"C:/Users/GINIT/Desktop/SUMMER/STAT 600/Final Project/A 2017 Soybeans Harvest.csv"}\NormalTok{)}
+\FunctionTok{head}\NormalTok{(A.}\FloatTok{2017.}\NormalTok{Soybeans.Harvest)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+##   X Longitude    Latitude                  IsoTime Yield SWATHWIDTH Swaths
+## 1 1  539.2350 0.002211722 2017-10-10T21:37:35.000Z     0          5      7
+## 2 2  539.2345 0.000000000 2017-10-10T21:37:35.990Z     0          5      7
+## 3 3  539.2586 0.088358278 2017-10-10T21:37:36.999Z     0          5      7
+## 4 4  539.4221 0.556358615 2017-10-10T21:37:38.000Z     0          5      7
+## 5 5  539.8540 1.362200247 2017-10-10T21:37:38.990Z     0          5      7
+## 6 6  540.5014 2.289686799 2017-10-10T21:37:39.998Z     0          5      7
+##     DISTANCE  Heading WetMass Moisture
+## 1 0.05401257 11.98437       0     0.00
+## 2 0.11962937 11.98437       0     0.00
+## 3 0.34928816 11.98437       0     0.00
+## 4 1.59600732 12.16437       0    12.61
+## 5 2.84272648 15.61437       0    12.61
+## 6 3.43327766 19.98437       0    12.61
+\end{verbatim}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{A.}\FloatTok{2018.}\NormalTok{Corn.Harvest }\OtherTok{\textless{}{-}} \FunctionTok{read.csv}\NormalTok{(}\StringTok{"C:/Users/GINIT/Desktop/SUMMER/STAT 600/Final Project/A 2018 Corn Harvest.csv"}\NormalTok{)}
+\FunctionTok{head}\NormalTok{(A.}\FloatTok{2018.}\NormalTok{Corn.Harvest)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+##   X Longitude Latitude                  IsoTime     Yield SWATHWIDTH Swaths
+## 1 1  222.3401 47.42736 2018-11-02T15:01:20.000Z   0.00000          5      7
+## 2 2  222.3310 47.47027 2018-11-02T15:01:21.001Z 579.40641          5      7
+## 3 3  222.2918 47.81928 2018-11-02T15:01:21.997Z 114.01412          5      7
+## 4 4  222.1965 48.47771 2018-11-02T15:01:22.997Z  57.06101          5      7
+## 5 5  222.1213 49.36118 2018-11-02T15:01:23.998Z  39.99598          5      7
+## 6 6  222.0467 50.24897 2018-11-02T15:01:25.002Z  35.99638          5      7
+##     DISTANCE  Heading   WetMass Moisture
+## 1 0.07232083 356.0781     0.000    14.83
+## 2 0.23636283 356.0781 27438.549    14.83
+## 3 1.15499800 355.4681  5399.288    14.83
+## 4 2.17205837 355.3381  2702.199    14.83
+## 5 2.92665154 355.8481  1894.062    14.83
+## 6 2.92665154 356.2081  1704.656    14.83
+\end{verbatim}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{A.}\FloatTok{2018.}\NormalTok{Corn.Seeding }\OtherTok{\textless{}{-}} \FunctionTok{read.csv}\NormalTok{(}\StringTok{"C:/Users/GINIT/Desktop/SUMMER/STAT 600/Final Project/A 2018 Corn Seeding.csv"}\NormalTok{)}
+\FunctionTok{head}\NormalTok{(A.}\FloatTok{2018.}\NormalTok{Corn.Seeding)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+##   X Longitude Latitude                  IsoTime AppliedRate ControlRate
+## 1 1  988.5402 617.7062 2018-05-20T18:50:11.000Z    24997.43       25000
+## 2 2  988.3954 617.4652 2018-05-20T18:50:11.200Z    24997.43       25000
+## 3 3  989.1215 615.9074 2018-05-20T18:50:12.200Z    13432.87       25000
+## 4 4  989.7790 614.3623 2018-05-20T18:50:13.199Z    20784.65       25000
+## 5 5  990.3813 612.8058 2018-05-20T18:50:14.199Z    22395.30       25000
+## 6 6  990.6216 611.2183 2018-05-20T18:50:15.200Z    24722.25       25000
+##     Variety  DISTANCE  Heading
+## 1 4296 vt2p 2.6630795 167.3613
+## 2 4296 vt2p 0.8258091 166.8613
+## 3 4296 vt2p 5.4517934 170.6213
+## 4 4296 vt2p 5.3533682 174.2913
+## 5 4296 vt2p 5.2549430 177.9613
+## 6 4296 vt2p 5.2549430 180.2213
+\end{verbatim}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{A.}\FloatTok{2019.}\NormalTok{Soybeans.Harvest }\OtherTok{\textless{}{-}} \FunctionTok{read.csv}\NormalTok{(}\StringTok{"C:/Users/GINIT/Desktop/SUMMER/STAT 600/Final Project/A 2019 Soybeans Harvest.csv"}\NormalTok{)}
+\FunctionTok{head}\NormalTok{(A.}\FloatTok{2019.}\NormalTok{Soybeans.Harvest)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+##   X Longitude Latitude                  IsoTime Yield SWATHWIDTH Swaths
+## 1 1  995.8329 616.4236 2019-10-27T02:18:30.000Z     0          5      7
+## 2 2  995.8311 616.4213 2019-10-27T02:18:31.000Z     0          5      7
+## 3 3  995.8352 616.4224 2019-10-27T02:18:32.002Z     0          5      7
+## 4 4  995.8362 616.4236 2019-10-27T02:18:32.990Z     0          5      7
+## 5 5  995.8359 616.4251 2019-10-27T02:18:33.995Z     0          5      7
+## 6 6  995.8350 616.4251 2019-10-27T02:18:34.999Z     0          5      7
+##     DISTANCE  Heading WetMass Moisture
+## 1 0.03477074 201.3125       0    13.34
+## 2 0.06757914 201.3125       0    13.34
+## 3 0.06757914 201.3125       0    13.34
+## 4 0.06757914 201.3125       0    13.34
+## 5 0.06757914 201.3125       0    13.34
+## 6 0.10038754 201.3125       0    13.34
+\end{verbatim}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{A.}\FloatTok{2020.}\NormalTok{Corn.Harvest }\OtherTok{\textless{}{-}} \FunctionTok{read.csv}\NormalTok{(}\StringTok{"C:/Users/GINIT/Desktop/SUMMER/STAT 600/Final Project/A 2020 Corn Harvest.csv"}\NormalTok{)}
+\FunctionTok{head}\NormalTok{(A.}\FloatTok{2020.}\NormalTok{Corn.Harvest)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+##   X Longitude Latitude                  IsoTime     Yield SWATHWIDTH Swaths
+## 1 1  220.4489 52.98846 2020-10-18T14:47:48.991Z  91.01878          5      7
+## 2 2  220.4363 54.64383 2020-10-18T14:47:50.001Z  96.40089          5      7
+## 3 3  220.4122 56.30262 2020-10-18T14:47:50.993Z 100.92145          5      7
+## 4 4  220.3557 57.96605 2020-10-18T14:47:51.993Z  97.32953          5      7
+## 5 5  220.3301 59.59996 2020-10-18T14:47:52.999Z 117.04560          5      7
+## 6 6  220.3309 61.25809 2020-10-18T14:47:54.000Z 117.49064          5      7
+##   DISTANCE  Heading  WetMass Moisture
+## 1 5.311181 358.7843 5096.816    12.65
+## 2 5.442414 359.0243 5398.200    12.65
+## 3 5.475223 358.9843 5651.340    12.65
+## 4 5.475223 358.8243 5450.202    12.65
+## 5 5.376798 358.6143 6554.251    12.65
+## 6 5.475223 359.0343 6579.172    12.65
+\end{verbatim}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{A.}\FloatTok{2020.}\NormalTok{Corn.Seeding }\OtherTok{\textless{}{-}} \FunctionTok{read.csv}\NormalTok{(}\StringTok{"C:/Users/GINIT/Desktop/SUMMER/STAT 600/Final Project/A 2020 Corn Seeding.csv"}\NormalTok{)}
+\FunctionTok{head}\NormalTok{(A.}\FloatTok{2020.}\NormalTok{Corn.Seeding)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+##   X Longitude Latitude                  IsoTime AppliedRate ControlRate
+## 1 1  632.2847 11.66755 2020-04-29T19:03:00.000Z    24058.56    26000.00
+## 2 2  629.9880 11.93185 2020-04-29T19:03:01.001Z    25329.27    26333.33
+## 3 3  627.8078 11.75159 2020-04-29T19:03:02.000Z    26523.10    26333.33
+## 4 4  625.6192 11.56094 2020-04-29T19:03:03.000Z    26439.46    26333.33
+## 5 5  623.4012 11.59478 2020-04-29T19:03:04.000Z    26496.12    26333.33
+## 6 6  621.1439 11.45611 2020-04-29T19:03:05.001Z    26439.46    26333.33
+##             Variety DISTANCE  Heading
+## 1 0100 conventional 5.127545 269.1869
+## 2 0100 conventional 5.619671 266.3669
+## 3 0100 conventional 5.225971 268.7369
+## 4 0100 conventional 5.258779 271.0269
+## 5 0100 conventional 5.488438 271.0969
+## 6 0100 conventional 5.422821 273.0469
+\end{verbatim}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\CommentTok{\# Load the required library}
+\FunctionTok{library}\NormalTok{(dplyr)}
+
+\CommentTok{\# Combine all the datasets into a single data frame}
+\NormalTok{Combined.dat }\OtherTok{\textless{}{-}} \FunctionTok{bind\_rows}\NormalTok{(}
+\NormalTok{  A.}\FloatTok{2017.}\NormalTok{Soybeans.Harvest,}
+\NormalTok{  A.}\FloatTok{2018.}\NormalTok{Corn.Harvest,}
+\NormalTok{  A.}\FloatTok{2018.}\NormalTok{Corn.Seeding,}
+\NormalTok{  A.}\FloatTok{2019.}\NormalTok{Soybeans.Harvest,}
+\NormalTok{  A.}\FloatTok{2020.}\NormalTok{Corn.Harvest,}
+\NormalTok{  A.}\FloatTok{2020.}\NormalTok{Corn.Seeding}
+\NormalTok{)}
+
+\CommentTok{\# Optional: Reset row names if needed}
+\FunctionTok{rownames}\NormalTok{(Combined.dat) }\OtherTok{\textless{}{-}} \ConstantTok{NULL}
+
+\CommentTok{\# View the first few rows of the merged data frame}
+\FunctionTok{head}\NormalTok{(Combined.dat)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+##   X Longitude    Latitude                  IsoTime Yield SWATHWIDTH Swaths
+## 1 1  539.2350 0.002211722 2017-10-10T21:37:35.000Z     0          5      7
+## 2 2  539.2345 0.000000000 2017-10-10T21:37:35.990Z     0          5      7
+## 3 3  539.2586 0.088358278 2017-10-10T21:37:36.999Z     0          5      7
+## 4 4  539.4221 0.556358615 2017-10-10T21:37:38.000Z     0          5      7
+## 5 5  539.8540 1.362200247 2017-10-10T21:37:38.990Z     0          5      7
+## 6 6  540.5014 2.289686799 2017-10-10T21:37:39.998Z     0          5      7
+##     DISTANCE  Heading WetMass Moisture AppliedRate ControlRate Variety
+## 1 0.05401257 11.98437       0     0.00          NA          NA    <NA>
+## 2 0.11962937 11.98437       0     0.00          NA          NA    <NA>
+## 3 0.34928816 11.98437       0     0.00          NA          NA    <NA>
+## 4 1.59600732 12.16437       0    12.61          NA          NA    <NA>
+## 5 2.84272648 15.61437       0    12.61          NA          NA    <NA>
+## 6 3.43327766 19.98437       0    12.61          NA          NA    <NA>
+\end{verbatim}
+
+\end{document}

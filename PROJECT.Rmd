@@ -1,0 +1,572 @@
+---
+title: "Statistical Programming: Final project"
+author: " Group Members: Isaac Kwesi Ofori & Theophilus Anim Bediako"
+date: "August 3, 2022"
+output:
+  pdf_document:
+    fig_caption: true
+    highlight: pygments
+    keep_tex: yes
+    number_sections: no
+    toc: no
+header-includes: 
+  - \usepackage{float}
+  - \usepackage{longtable}
+  -  \usepackage{titling}
+    \pretitle{\begin{center}
+      \includegraphics[width=2in,height=3in]{SDSU.png}\LARGE\\}
+    \posttitle{\end{center}}
+---
+\centering
+
+\raggedright
+
+\clearpage
+
+\tableofcontents
+
+\newpage
+
+\listoffigures
+
+\newpage
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo=TRUE, warning=FALSE, message=FALSE)
+knitr::opts_knit$set(eval.after = "fig.cap")
+```
+```{r,include=FALSE}
+library(visdat)
+library(bnlearn)
+library(ggplot2)
+```
+
+## Introduction
+In this project, we consider data from 2017 to 2020 to look at the casual inferences about the relationship among grain yield and seeding rate. The grains considered are corn and soybeans.\
+By looking at past years yield at different parts of the field, we varied the seed densities at different parts of the field to match how well we expect a part of the field to be fertile. In 2018 and 2020, corn was planted after soybeans was planted in 2017 and 2019 farming periods respectively.\ 
+Considering 2018 and 2020 farming periods separately, we observe that the corn planted in 2018 and 2020 produced high and low corn yield at different parts of the field.\
+Since we varied the seed densities based on past years yield and how well we expect a part of the field to be fertile, the questions that arise are:\
+1. Were the parts of the field that produced high corn yield in 2018 and 2020 due to high seed densities?\
+2. Were the parts of the field that produced  low corn yield in 2018 and 2020 due to low seed densities?\
+3. Were the parts with low corn yields in 2018 and 2020 just poor parts of the field?\
+4. Were the parts with high corn yields in 2018 and 2020 just fertile parts of the field?\
+
+The following steps are intended to produce results that would help us answer these questions.
+
+I.    Data Exploration
+
+II.   Normalization formula and justification of the choice of formula
+
+III.  Algorithm
+
+IV.  Code to implement the algorithm described inn step III.\
+**We hid some of the codes in our report and only showed the ones performing the calculations and most important graphs. However, all codes are in the RMD file.** \
+
+\clearpage
+
+## Data Exploration
+
+```{r, include=FALSE}
+#Load Data directories
+A.2017.Soybeans.Harvest_dir <- "E:/THEO ANIM/SDSU GRAD SCHOOL/SUMMER 2022/STATISTICAL PROGRAMMING/FINAL PROJECT/A 2017 Soybeans Harvest.csv"
+A.2018.Corn.Harvest_dir <- "E:/THEO ANIM/SDSU GRAD SCHOOL/SUMMER 2022/STATISTICAL PROGRAMMING/FINAL PROJECT/A 2018 Corn Harvest.csv"
+A.2018.Corn.Seeding_dir <- "E:/THEO ANIM/SDSU GRAD SCHOOL/SUMMER 2022/STATISTICAL PROGRAMMING/FINAL PROJECT/A 2018 Corn Seeding.csv"
+A.2019.Soybeans.Harvest_dir <- "E:/THEO ANIM/SDSU GRAD SCHOOL/SUMMER 2022/STATISTICAL PROGRAMMING/FINAL PROJECT/A 2019 Soybeans Harvest.csv" 
+A.2020.Corn.Harvest_dir <- "E:/THEO ANIM/SDSU GRAD SCHOOL/SUMMER 2022/STATISTICAL PROGRAMMING/FINAL PROJECT/A 2020 Corn Harvest.csv" 
+A.2020.Corn.Seeding_dir <-  "E:/THEO ANIM/SDSU GRAD SCHOOL/SUMMER 2022/STATISTICAL PROGRAMMING/FINAL PROJECT/A 2020 Corn Seeding.csv" 
+
+#Load Data
+Soybeans.Harvest.17 <- read.csv(A.2017.Soybeans.Harvest_dir, header=TRUE)
+Corn.Harvest.18 <- read.csv(A.2018.Corn.Harvest_dir, header=TRUE)
+Corn.Seeding.18 <- read.csv(A.2018.Corn.Seeding_dir, header=TRUE)
+Soybeans.Harvest.19<- read.csv(A.2019.Soybeans.Harvest_dir, header=TRUE)
+Corn.Harvest.20 <- read.csv(A.2020.Corn.Harvest_dir, header = TRUE)
+Corn.Seeding.20 <- read.csv(A.2020.Corn.Seeding_dir, header = TRUE)
+```
+
+### Check if the data loaded as expected
+```{r, echo=FALSE, fig.width=5, fig.height=4, fig.cap = "2017 Soybeans Harvest"}
+plot(Latitude~Longitude, data=Soybeans.Harvest.17, pch=".")
+```
+
+```{r, echo=FALSE, fig.width=5, fig.height=4, fig.cap = "2018 Corn Seeding"}
+plot(Latitude~Longitude, data=Corn.Seeding.18, pch=".")
+```
+
+```{r, echo=FALSE, fig.width=5, fig.height=4, fig.cap="2018 Corn Harvest"}
+plot(Latitude~Longitude, data=Corn.Harvest.18, pch=".")
+```
+
+```{r, echo=FALSE, fig.width=5, fig.height=4, fig.cap = "2019 Soybeans Harvest"}
+plot(Latitude~Longitude, data=Soybeans.Harvest.19, pch=".")
+```
+
+```{r, echo=FALSE, fig.width=5, fig.height=4, fig.cap = "2020 Corn Seeding"}
+plot(Latitude~Longitude, data=Corn.Seeding.20, pch=".")
+```
+
+```{r, echo=FALSE, fig.width=5, fig.height=4, fig.cap = "2020 Corn Harvest"}
+plot(Latitude~Longitude, data=Corn.Harvest.20, pch=".")
+```
+
+
+
+\clearpage
+
+### Variables and Variable Description
+
+The Harvest(Corn and Soybeans) datasets has 11 variables each. Out of this number, the variables of interest are Longitude, Latitude and Yield.
+
+Corn Seeding dataset has 9 variables with the variables of interest being Longitude, Latitude and Applied Rate.
+
+
+**2017 Soybeans Harvest has 21,612 observations of 14 variables**\
+
+**2018 Corn Harvest has 25,146 observations of 14 variables**\
+
+**2019 Soybeans Harvest has 20835 observations of 14 variables**\
+
+**2020 Corn Harvest has 9498 observations 14 variables**\
+
+**2018 Corn Seeding has 9221 observation 12 variables**\
+
+**2020 Corn Seeding has 9498 observations 12 variables**\
+
+**Yield:** the standard measurement of the amount of corn or soybeans harvested per unit of land area after a planting period. Yield is measured in bushels per acre.
+
+**Longitude:** imaginary lines that runs from the north to the south of the fields.
+
+**Latitude:** imaginary lines that run east to west of fields.
+
+
+**AppliedRate:** The rate at which the seeds are planted. It is measured in seeds per acre.
+
+
+\clearpage
+
+### Show data type
+
+```{r, echo=FALSE,  fig.width=5, fig.height=4, fig.cap = "Data types of the variables in the harvest datasets"}
+
+vis_dat(Soybeans.Harvest.17,sort_type = TRUE, palette = "cb_safe")
+```
+
+```{r, echo=FALSE,  fig.width=5, fig.height=4, fig.cap = "Data types of the variables in the seeding datasets"}
+
+vis_dat(Corn.Seeding.18, sort_type = TRUE, palette = "cb_safe")
+```
+
+
+
+\clearpage
+
+## Data Cleaning
+### Check for missing data
+
+```{r, echo=FALSE,  fig.width=5, fig.height=4, fig.cap = "No Missing data in harvest datasets"}
+
+vis_miss(Soybeans.Harvest.17)
+```
+\clearpage
+```{r, echo=FALSE,  fig.width=5, fig.height=4, fig.cap = "No Missing data in seeding datasets"}
+
+vis_miss(Corn.Seeding.18)
+```
+
+\
+Similar results were obtained for the rest of the datasets. There are no missing data in all the six dataset. We proceed to check for outliers.
+
+
+\clearpage
+### Check for outliers
+
+```{r, recho=FALSE,  fig.width=5, fig.height=4, fig.cap = "Boxplot of 2017 Soybeans Yield"}
+ggplot(data = Soybeans.Harvest.17, aes(x=Yield))+geom_boxplot(outlier.colour = 'red')
+```
+\clearpage
+```{r, recho=FALSE,  fig.width=5, fig.height=4, fig.cap = "Boxplot 2018 Corn Seeding Applied Rate"}
+ggplot(data=Corn.Seeding.18, aes(x=AppliedRate))+geom_boxplot(outlier.colour = 'red')
+```
+
+
+
+
+The outliers are indicated in red. Similary work on the rest of the dataset show there are outliers associated with the variables of interest.
+
+### Decide on what to do with the outliers later on based on the normalization approach we choose.
+
+
+
+\clearpage
+
+
+## Algorithm
+
+**Main ideas**\
+1. Create the strength plot using the original data without dealing with the outliers.\
+
+2. We use rank normalization method to produce the next strength plots. Here, we still use the original data set since the rank method cleans the data compared to the other options and removes the noise by only preserving the ordering of observations.\
+
+Through out our steps, we applied the normalization method before aggregating the data. We then merged the aggregated data on cells to obtain the combined.dat.\
+We explained other steps of our algorithm and implements the code right under it. It made it easier for us to follow along.\
+
+### Create the grid
+To create the grid, we need to create row and column variables of the Latitude and Longitude respectively by using the following formulae.\
+
+The grid has 50m by 50m dimension. 
+
+$$Row = ceiling(\frac{Latitude}{50})$$
+$$Column = ceiling(\frac{Longitude}{50})$$
+$$Cell = 1000*Row+Column$$
+
+```{r}
+#Compute row and column variables
+Soybeans.Harvest.17$Row <- ceiling(Soybeans.Harvest.17$Latitude/50)
+Soybeans.Harvest.17$Column <- ceiling(Soybeans.Harvest.17$Longitude/50)
+
+Corn.Harvest.18$Row <- ceiling(Corn.Harvest.18$Latitude/50)
+Corn.Harvest.18$Column <- ceiling(Corn.Harvest.18$Longitude/50)
+
+Soybeans.Harvest.19$Row <- ceiling(Soybeans.Harvest.19$Latitude/50)
+Soybeans.Harvest.19$Column <- ceiling(Soybeans.Harvest.19$Longitude/50)
+
+Corn.Harvest.20$Row <-  ceiling(Corn.Harvest.20$Latitude/50)
+Corn.Harvest.20$Column <- ceiling(Corn.Harvest.20$Longitude/50)
+
+Corn.Seeding.18$Row <- ceiling(Corn.Seeding.18$Latitude/50)
+Corn.Seeding.18$Column <- ceiling(Corn.Seeding.18$Longitude/50)
+
+Corn.Seeding.20$Row <- ceiling(Corn.Seeding.20$Latitude/50)
+Corn.Seeding.20$Column <- ceiling(Corn.Seeding.20$Longitude/50)
+
+#Create the cells
+Corn.Seeding.18$Cells <- 1000*Corn.Seeding.18$Row+Corn.Seeding.18$Column
+Soybeans.Harvest.17$Cells <- 1000*Soybeans.Harvest.17$Row+Soybeans.Harvest.17$Column
+Corn.Harvest.18$Cells <- 1000*Corn.Harvest.18$Row+Corn.Harvest.18$Column
+Soybeans.Harvest.19$Cells <- 1000*Soybeans.Harvest.19$Row+Soybeans.Harvest.19$Column
+Corn.Seeding.20$Cells <- 1000*Corn.Seeding.20$Row+Corn.Seeding.20$Column
+Corn.Harvest.20$Cells <- 1000*Corn.Harvest.20$Row+Corn.Harvest.20$Column
+```
+\clearpage
+```{r,recho=FALSE,  fig.width=5, fig.height=4, fig.cap = "Harvest per grid for 2020 Corn Harvest Dataset"}
+plot(Latitude ~ Longitude,data=Corn.Harvest.20,pch = ".")
+abline(h=1:12*50,v=1:20*50,col='red')
+```
+
+```{r,recho=FALSE,  fig.width=5, fig.height=4, fig.cap = "Grid with data points"}
+plot(Row ~ Column,data=Corn.Harvest.20)
+abline(h=1:12+0.5,v=1:20+0.5,col='red')
+```
+
+
+
+\clearpage
+
+### Aggregate the Data
+In each grid cell, we compute the average and the length(number of observation) the yield and the seeding AppliedRate for all the datasets \
+We select grid cells with at least 30 observations.
+
+```{r}
+#Applied Rate
+AR18 <- aggregate(Corn.Seeding.18$AppliedRate, by=list(Corn.Seeding.18$Cells), FUN=mean)
+Samp.AR18 <- aggregate(Corn.Seeding.18$AppliedRate, by=list(Corn.Seeding.18$Cells), FUN=length)
+
+AR20 <-  aggregate(Corn.Seeding.20$AppliedRate, by=list(Corn.Seeding.20$Cells), FUN=mean)
+Samp.AR20 <- aggregate(Corn.Seeding.20$AppliedRate, by=list(Corn.Seeding.20$Cells), FUN=length)
+
+#Yield
+Y17 <- aggregate(Soybeans.Harvest.17$Yield, by=list(Soybeans.Harvest.17$Cells), FUN=mean)
+Samp.Y17 <- aggregate(Soybeans.Harvest.17$Yield, by=list(Soybeans.Harvest.17$Cells), FUN=length)
+
+Y18 <- aggregate(Corn.Harvest.18$Yield, by=list(Corn.Harvest.18$Cells), FUN=mean)
+Samp.Y18 <- aggregate(Corn.Harvest.18$Yield, by=list(Corn.Harvest.18$Cells), FUN=length)
+
+Y19 <- aggregate(Soybeans.Harvest.19$Yield, by=list(Soybeans.Harvest.19$Cells), FUN=mean)
+Samp.Y19 <- aggregate(Soybeans.Harvest.19$Yield, by=list(Soybeans.Harvest.19$Cells), FUN=length)
+
+Y20 <- aggregate(Corn.Harvest.20$Yield, by=list(Corn.Harvest.20$Cells), FUN=mean)
+Samp.Y20 <- aggregate(Corn.Harvest.20$Yield, by=list(Corn.Harvest.20$Cells), FUN=length)
+```
+
+
+```{r}
+#Subset the data to get those with atleast 30 observations
+AR18 <- na.omit(subset(AR18,Samp.AR18>30)) #drop the nulls associated with subseting the data
+names(AR18)[1] <-'Cells' 
+names(AR18)[2] <- 'AR18'
+
+AR20 <- na.omit(subset(AR20, Samp.AR20>30 ))
+names(AR20)[1] <-'Cells' 
+names(AR20)[2] <- 'AR20'
+
+Y17 <- na.omit(subset(Y17, Samp.Y17>30))
+names(Y17)[1] <-'Cells' 
+names(Y17)[2] <- 'Y17'
+
+Y18 <- na.omit(subset(Y18, Samp.Y18>30))
+names(Y18)[1] <-'Cells' 
+names(Y18)[2] <- 'Y18'
+
+Y19 <- na.omit(subset(Y19, Samp.Y19>30))
+names(Y19)[1] <-'Cells' 
+names(Y19)[2] <- 'Y19'
+
+Y20 <- na.omit(subset(Y20, Samp.Y20>30))
+names(Y20)[1] <-'Cells' 
+names(Y20)[2] <- 'Y20'
+
+merge1 <- merge(Y17, AR18, by="Cells")
+merge2 <- merge(merge1,Y18, by="Cells")
+merge3 <- merge(merge2, Y19, by="Cells")
+merge4 <- merge(merge3, AR20, by="Cells")
+Combined.dat <- merge(merge4, Y20, by="Cells")
+Combined.dat.ori <- Combined.dat
+```
+
+```{r,recho=FALSE, fig.cap = "Pairs plot using original data"}
+pairs(Combined.dat)
+```
+
+
+\clearpage
+```{r, fig.cap="DAG plot using original data"}
+par(mfrow=c(1,3))
+library(bnlearn)
+modela.dag <- model2network("[Y17][AR18|Y17][Y18|AR18:Y17]")
+fit1 = bn.fit(modela.dag, Combined.dat[,c('Y17','AR18','Y18')])
+#fit1
+strengtha <- arc.strength(modela.dag, Combined.dat[,c('Y17','AR18','Y18')])
+strength.plot(modela.dag, strengtha)
+
+
+modelb.dag <- model2network("[Y19][AR20|Y19][Y20|AR20:Y19]")
+fit2 = bn.fit(modelb.dag, Combined.dat[,c('Y19','AR20','Y20')])
+#fit2
+strengthb <- arc.strength(modelb.dag, Combined.dat[,c('Y19','AR20','Y20')])
+strength.plot(modelb.dag, strengthb)
+
+model1.dag <- model2network("[Y17][AR18|Y17][Y18|AR18:Y17][Y19|Y17:AR18:Y18][AR20|Y19][Y20|AR20:Y19]")
+fit3 = bn.fit(model1.dag, Combined.dat[,c('Y17','AR18','Y18','Y19','AR20','Y20')])
+
+strength1 <- arc.strength(model1.dag, Combined.dat[,c('Y17','AR18','Y18','Y19','AR20','Y20')])
+strength.plot(model1.dag, strength1)
+```
+
+```{r, include=FALSE}
+#reassign plot to be printed in the final output
+model1.ori <- model1.dag
+strength.ori <- arc.strength(model1.ori, Combined.dat.ori[,c('Y17','AR18','Y18','Y19','AR20','Y20')])
+strength.plot(model1.ori, strength.ori, main="Original Dataset")
+```
+
+
+\clearpage
+## Normalization method
+
+### Rank
+The data we use does not follow the normal distribution hence it is expedient that we normalize the data before performing the necessary simulations. The normalization will reduce the redundancy in the data.
+There are basically three ways to normalize data. 
+These are:\
+-	Using Rank\
+-	Using the Z-score\
+-	Using Percentage\
+
+We decided to use the rank option to normalize the data. With rank normalization (rank), we replace each entry in one array by its position (rank). 
+
+Let j denote the year, y denote yield and i denote an observation. Then for $j$ in $\{2017,$ $2018,$ $2019$ and $2020\}$ replace $y_{ij}$ with $rank(y_{ij})$\
+
+
+```{r, include=FALSE}
+#Reload the orignal dataset because we manipulated the appearance of the data and we were not sure of how that would impact what we are about to do
+Soybeans.Harvest.17.TN <- read.csv(A.2017.Soybeans.Harvest_dir, header=TRUE)
+Corn.Harvest.18.TN <- read.csv(A.2018.Corn.Harvest_dir, header=TRUE)
+Corn.Seeding.18.TN <- read.csv(A.2018.Corn.Seeding_dir, header=TRUE)
+Soybeans.Harvest.19.TN<- read.csv(A.2019.Soybeans.Harvest_dir, header=TRUE)
+Corn.Harvest.20.TN <- read.csv(A.2020.Corn.Harvest_dir, header = TRUE)
+Corn.Seeding.20.TN <- read.csv(A.2020.Corn.Seeding_dir, header = TRUE)
+
+```
+
+
+```{r}
+#.TN denotes the ranked datasets
+Soybeans.Harvest.17.TN$RY17 <- rank(Soybeans.Harvest.17.TN$Yield)
+Corn.Harvest.18.TN$RY18 <- rank(Corn.Harvest.18.TN$Yield)
+Soybeans.Harvest.19.TN$RY19 <- rank(Soybeans.Harvest.19.TN$Yield)
+Corn.Harvest.20.TN$RY20 <- rank(Corn.Harvest.20.TN$Yield)
+```
+
+
+```{r}
+#Create row and column variables of the ranked datasets as done previously
+
+Soybeans.Harvest.17.TN$Row <- ceiling(Soybeans.Harvest.17.TN$Latitude/50)
+Soybeans.Harvest.17.TN$Column <- ceiling(Soybeans.Harvest.17.TN$Longitude/50)
+
+Corn.Harvest.18.TN$Row <- ceiling(Corn.Harvest.18.TN$Latitude/50)
+Corn.Harvest.18.TN$Column <- ceiling(Corn.Harvest.18.TN$Longitude/50)
+
+Soybeans.Harvest.19.TN$Row <- ceiling(Soybeans.Harvest.19.TN$Latitude/50)
+Soybeans.Harvest.19.TN$Column <- ceiling(Soybeans.Harvest.19.TN$Longitude/50)
+
+Corn.Harvest.20.TN$Row <-  ceiling(Corn.Harvest.20.TN$Latitude/50)
+Corn.Harvest.20.TN$Column <- ceiling(Corn.Harvest.20.TN$Longitude/50)
+
+Corn.Seeding.18.TN$Row <- ceiling(Corn.Seeding.18.TN$Latitude/50)
+Corn.Seeding.18.TN$Column <- ceiling(Corn.Seeding.18.TN$Longitude/50)
+
+Corn.Seeding.20.TN$Row <- ceiling(Corn.Seeding.20.TN$Latitude/50)
+Corn.Seeding.20.TN$Column <- ceiling(Corn.Seeding.20.TN$Longitude/50)
+
+#Create the cells using the ranked datasets
+Corn.Seeding.18.TN$Cells <- 1000*Corn.Seeding.18.TN$Row+Corn.Seeding.18.TN$Column
+
+Soybeans.Harvest.17.TN$Cells <- 1000*Soybeans.Harvest.17.TN$Row+Soybeans.Harvest.17.TN$Column
+
+Corn.Harvest.18.TN$Cells <- 1000*Corn.Harvest.18.TN$Row+Corn.Harvest.18.TN$Column
+
+Soybeans.Harvest.19.TN$Cells <- 1000*Soybeans.Harvest.19.TN$Row+Soybeans.Harvest.19.TN$Column
+
+Corn.Seeding.20.TN$Cells <- 1000*Corn.Seeding.20.TN$Row+Corn.Seeding.20.TN$Column
+
+Corn.Harvest.20.TN$Cells <- 1000*Corn.Harvest.20.TN$Row+Corn.Harvest.20.TN$Column
+
+```
+
+\clearpage
+```{r, fig.cap="Harvest per grid afer notmalization", }
+plot(Latitude ~ Longitude,data=Corn.Harvest.20.TN,pch = ".")
+abline(h=1:12*50,v=1:20*50,col='red')
+
+
+```
+
+\clearpage
+```{r, fig.cap="Grid with datapoints after normalization"}
+plot(Row ~ Column,data=Corn.Harvest.20.TN)
+abline(h=1:12+0.5,v=1:20+0.5,col='red')
+```
+
+
+\clearpage
+
+### Aggregate the Ranked Data
+
+```{r}
+#Aggregate the data
+#Applied Rate
+AR18 <- aggregate(Corn.Seeding.18.TN$AppliedRate, by=list(Corn.Seeding.18.TN$Cells), FUN=mean)
+Samp.AR18 <- aggregate(Corn.Seeding.18.TN$AppliedRate, by=list(Corn.Seeding.18.TN$Cells), FUN=length)
+
+AR20 <-  aggregate(Corn.Seeding.20.TN$AppliedRate, by=list(Corn.Seeding.20.TN$Cells), FUN=mean)
+Samp.AR20 <- aggregate(Corn.Seeding.20.TN$AppliedRate, by=list(Corn.Seeding.20.TN$Cells), FUN=length)
+
+#Yield
+Y17 <- aggregate(Soybeans.Harvest.17.TN$RY17, by=list(Soybeans.Harvest.17.TN$Cells), FUN=mean)
+Samp.Y17 <- aggregate(Soybeans.Harvest.17.TN$RY17, by=list(Soybeans.Harvest.17.TN$Cells), FUN=length)
+
+Y18 <- aggregate(Corn.Harvest.18.TN$RY18, by=list(Corn.Harvest.18.TN$RY18), FUN=mean)
+Samp.Y18 <- aggregate(Corn.Harvest.18.TN$RY18, by=list(Corn.Harvest.18.TN$Cells), FUN=length)
+
+Y19 <- aggregate(Soybeans.Harvest.19.TN$RY19, by=list(Soybeans.Harvest.19.TN$Cells), FUN=mean)
+Samp.Y19 <- aggregate(Soybeans.Harvest.19.TN$RY19, by=list(Soybeans.Harvest.19.TN$Cells), FUN=length)
+
+Y20 <- aggregate(Corn.Harvest.20.TN$RY20, by=list(Corn.Harvest.20.TN$Cells), FUN=mean)
+Samp.Y20 <- aggregate(Corn.Harvest.20.TN$RY20, by=list(Corn.Harvest.20.TN$Cells), FUN=length)
+```
+
+
+```{r}
+#Subset the data, only select data with at least 30 observations
+AR18 <- na.omit(subset(AR18,Samp.AR18>30)) #drop the nulls associated with subsetting the data
+names(AR18)[1] <-'Cells' 
+names(AR18)[2] <- 'AR18'
+
+AR20 <- na.omit(subset(AR20, Samp.AR20>30 ))
+names(AR20)[1] <-'Cells' 
+names(AR20)[2] <- 'AR20'
+
+Y17 <- na.omit(subset(Y17, Samp.Y17>30))
+names(Y17)[1] <-'Cells' 
+names(Y17)[2] <- 'Y17'
+
+Y18 <- na.omit(subset(Y18, Samp.Y18>30))
+names(Y18)[1] <-'Cells' 
+names(Y18)[2] <- 'Y18'
+
+Y19 <- na.omit(subset(Y19, Samp.Y19>30))
+names(Y19)[1] <-'Cells' 
+names(Y19)[2] <- 'Y19'
+
+Y20 <- na.omit(subset(Y20, Samp.Y20>30))
+names(Y20)[1] <-'Cells' 
+names(Y20)[2] <- 'Y20'
+
+merge1 <- merge(Y17, AR18, by="Cells")
+merge2 <- merge(merge1,Y18, by="Cells")
+merge3 <- merge(merge2, Y19, by="Cells")
+merge4 <- merge(merge3, AR20, by="Cells")
+Combined.dat <- merge(merge4, Y20, by="Cells")
+Combined.dat.norm <- Combined.dat
+```
+
+```{r, fig.cap="Pairs plot after normalization"}
+pairs(Combined.dat)
+```
+
+```{r, fig.cap="DAG plot after normalization"}
+par(mfrow=c(1,3))
+modela.dag <- model2network("[Y17][AR18|Y17][Y18|AR18:Y17]")
+fit1 = bn.fit(modela.dag, Combined.dat[,c('Y17','AR18','Y18')])
+#fit1
+strengtha <- arc.strength(modela.dag, Combined.dat[,c('Y17','AR18','Y18')])
+strength.plot(modela.dag, strengtha)
+
+modelb.dag <- model2network("[Y19][AR20|Y19][Y20|AR20:Y19]")
+fit2 = bn.fit(modelb.dag, Combined.dat[,c('Y19','AR20','Y20')])
+#fit2
+strengthb <- arc.strength(modelb.dag, Combined.dat[,c('Y19','AR20','Y20')])
+strength.plot(modelb.dag, strengthb)
+
+model1.dag <- model2network("[Y17][AR18|Y17][Y18|AR18:Y17][Y19|Y17:AR18:Y18][AR20|Y19][Y20|AR20:Y19]")
+fit3 = bn.fit(model1.dag, Combined.dat[,c('Y17','AR18','Y18','Y19','AR20','Y20')])
+#fit3
+strength1 <- arc.strength(model1.dag, Combined.dat[,c('Y17','AR18','Y18','Y19','AR20','Y20')])
+strength.plot(model1.dag, strength1)
+```
+
+
+```{r}
+#reassign normalised data plot to be printed in final output
+#without the reassigning, R will overwrite plot for the original dataset and produce only results for the normalised data for both plots in my final output
+model1.dag.norm <- model1.dag
+strength1.norm <- arc.strength(model1.dag.norm, Combined.dat.norm[,c('Y17','AR18','Y18','Y19','AR20','Y20')])
+```
+
+
+## Final Output
+```{r, fig.cap="Final output"}
+par(mfrow=c(1,2))
+strength.plot(model1.ori, strength.ori, main="Original Dataset")
+strength.plot(model1.dag.norm, strength1.norm, main="Ranked Dataset")
+```
+
+\clearpage
+
+## Conclusion
+The two plots show which variable has direct relationship with other variable. For example, if we look at the plot for the original dataset, we see that Y17(2017 yield) influences the AR18(2018 seeding AppliedRate).\
+
+For the plot associated with the normalzed data, we see that there is a direct relationship from Y19 to AR20.\
+
+Another point to note is that the normalization(rank method) changed the results of our plot which intends influenced how we interpret how one variable is related to another.\
+
+
+
+**Contributions**\
+
+
+**Theophilus Anim Bediako: ** Contributed with the data exploration, cleaning and the normalisation implementation as well as the plot associated with the normalised data.\
+
+**Isaac Kwesi Ofori: ** Contributed with the introduction, explained the rank method and reason for choosing it as well as the plot associated with the original data.\
+
+Both members contributed with the conclusions.\
